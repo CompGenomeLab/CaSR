@@ -92,6 +92,12 @@ After paralog removal,  264 CaSR_like sequences and all GPRC6A, CaSR and TAS1R1-
 iqtree2 -s aln.fasta -m MFP -bb 1000 -nt AUTO
 ```
 
+ML tree of all class C GPCRs by selecting representative sequences was built by aligning them with `einsi` and using the following command:
+
+```
+raxml-ng --all --msa aln.fasta --model JTT --data-type AA --prefix rep_tree_with_264_casr_likes --seed 2 --threads 8 --bs-metric fbp,tbe
+```
+
 ## Predict the Mutation Types in CaSR 
 To predict the mutation type (LoF/GoF) in human CaSR,a gradient boosting- based machine learning algorithm, XGBoost was used.
 
