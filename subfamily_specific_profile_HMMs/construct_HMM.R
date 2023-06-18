@@ -255,7 +255,7 @@ construct_HMM <- function(folder_name, main_fam, close_fam, rest_fam, cfunvals_f
         
       } else if (main_sub_obs!=close_obs && main_sub_obs!=rest_obs && rest_obs!=close_obs) {
         if (aa_to_num(main_sub_obs)!=21 && aa_to_num(close_obs)!=21 && aa_to_num(rest_obs)!=21) {
-          if (sum(overall[k,1]>=bound1_conslevel)==1 && sum(overall[k,2:3]>=bound2_conslevel)==2){
+          if ((overall[k,1]>=bound1_conslevel) && sum(overall[k,2:3]>=bound2_conslevel)==2){
             weight[k] <- (sum(overall[k,]))
             type[k] <- 1
           } else if (Z_prob[aa_to_num(main_sub_obs),aa_to_num(close_obs)]<=bound_blosum && Z_prob[aa_to_num(main_sub_obs),aa_to_num(rest_obs)]<=bound_blosum){
@@ -266,7 +266,7 @@ construct_HMM <- function(folder_name, main_fam, close_fam, rest_fam, cfunvals_f
             type[k] <- 4
           }
         } else if (aa_to_num(close_obs) ==21) {
-          if (sum(overall[k,1]>=bound1_conslevel)==1 && sum(overall[k,2:3]>=bound2_conslevel)==2){
+          if ((overall[k,1]>=bound1_conslevel) && sum(overall[k,2:3]>=bound2_conslevel)==2){
             weight[k] <- (sum(overall[k,]))
             type[k] <- 1
           } else if (Z_prob[aa_to_num(main_sub_obs),aa_to_num(rest_obs)]<=bound_blosum){
@@ -277,7 +277,7 @@ construct_HMM <- function(folder_name, main_fam, close_fam, rest_fam, cfunvals_f
             type[k] <- 4
           }
         } else if (aa_to_num(rest_obs) ==21) {
-          if (sum(overall[k,1]>=bound1_conslevel)==1 && sum(overall[k,2:3]>=bound2_conslevel)==2){
+          if ((overall[k,1]>=bound1_conslevel) && sum(overall[k,2:3]>=bound2_conslevel)==2){
             weight[k] <- (sum(overall[k,]))
             type[k] <- 1
           } else if (Z_prob[aa_to_num(main_sub_obs),aa_to_num(close_obs)]<=bound_blosum){
@@ -307,7 +307,7 @@ construct_HMM <- function(folder_name, main_fam, close_fam, rest_fam, cfunvals_f
           }
         }
       } else if (main_sub_obs!=close_obs && main_sub_obs!=rest_obs && rest_obs==close_obs) {
-        if (sum(overall[k,1]>=bound1_conslevel)==1 && sum(overall[k,2:3]>=bound2_conslevel)==2){
+        if ((overall[k,1]>=bound1_conslevel) && sum(overall[k,2:3]>=bound2_conslevel)==2){
           weight[k] <- (sum(overall[k,]))
           type[k] <- 1
         } else if (Z_prob[aa_to_num(main_sub_obs),aa_to_num(close_obs)]<=bound_blosum){
@@ -321,32 +321,51 @@ construct_HMM <- function(folder_name, main_fam, close_fam, rest_fam, cfunvals_f
     }
     
     weg <- cbind(weight, t(type), 1:numpos)
+    
+    ### Weight of Positions labelled as Type 1
+    c1 <- 1
+    if (main_fam=="TAS1R2"){
+      c1 <- 1.5
+    }
     type1 <- weg[which(weg[,2]==1),]
     min_1 <- min(type1[,1])
-    tyy <- type1[which(type1[,1]<3),1]
-    max_1 <- max(tyy)
-    type1 <- cbind(type1, type1[,1]/min_1)
+    type1 <- cbind(type1, type1[,1]/min_1*c1)
     
-    min_w1 <- mean(type1[,4])
+    ### Weight of Positions labelled as Type 4
+    c2 <- mean(type1[,4])
     type4 <- weg[which(weg[,2]==4),]
     max_4 <- max(type4[,1])
-    min_4 <- min(type4[,1])
-    type4 <- cbind(type4, type4[,1]/(max_4)*min_w1)
+    type4 <- cbind(type4, type4[,1]/(max_4)*c2)
     
-    min_w1 <- min(type4[,4])
+    ### Weight of Positions labelled as Type 3
+    c3 <- 1
+    if (main_fam=="CaSR"){
+      c3 <- min(type4[,4])/2
+    } else if (main_fam=="GPRC6A"){
+      c3 <- min(type4[,4])
+    } else if (main_fam=="TAS1R1" && main_fam=="TAS1R3" && main_fam=="TAS1R2"){
+      c3 <- 0.5
+    }
     type3 <- weg[which(weg[,2]==3),]
     max_3 <- max(type3[,1])
-    min_3 <- min(type3[,1])
-    type3 <- cbind(type3, type3[,1]/(max_3)*min_w1)
+    type3 <- cbind(type3, type3[,1]/(max_3)*c3)
     
-    min_w3 <- 0.2
-    
+    ### Weight of Positions labelled as Type 2
+    c4 <- 1
+    if (main_fam=="CaSR"){
+      c4 <- min(type3[,4])/2
+    } else if (main_fam=="GPRC6A" && main_fam=="TAS1R2"){
+      c4 <- 0.2
+    } else if (main_fam=="TAS1R1" && main_fam=="TAS1R3"){
+      c4 <- 0.25
+    }
     type2 <- weg[which(weg[,2]==2),]
     max_2 <- max(type2[,1])
-    min_2 <- min(type2[,3])
-    type2 <- cbind(type2, (type2[,1]/(max_2))*min_w3)
+    type2 <- cbind(type2, (type2[,1]/(max_2))*c4)
     
-    type1[,4]<-type1[,4]*2
+    if (main_fam=="GPRC6A"){
+      type1[,4]<-type1[,4]*2
+    }
     type2[,4]<-type2[,4]
     type3[,4]<-type3[,4]
     type4[,4]<-type4[,4]
@@ -358,7 +377,6 @@ construct_HMM <- function(folder_name, main_fam, close_fam, rest_fam, cfunvals_f
     overall <- cbind(overall, weight_upd[,4])
     main_fam_aa <- main_sub_aa
     weights <- cbind(1:numpos, weight_upd[,4])
-    
     
     
     #################### UPDATE PROFILE PROBABILITIES ##############################
