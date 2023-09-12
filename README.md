@@ -74,7 +74,11 @@ python make_hmmscan_json_file.py
  
 Each sequence was assigned to a subfamily (1) The maximum score value of the hmmscan belonged to the given subfamily, (2)E-value is a measure of the significance of a match in a database search and the lower the E-value, the more significant the match is. The E-value of the sequence must be the lowest. (3)The sequence must belong to the most common highest taxonomic level of the given subfamily. 
 
+To add lineage information to the ML tree
 
+```
+python add_lineage.py tree_file.nwk
+```
 ```
 python retrieve_subclass_sequences.py subfamily_tree_file subfamily_name
 ```
