@@ -109,6 +109,8 @@ For each dataset split the sklearn train test split model was used with stratify
 
 Subfamily alignments and mutations were divided randomly as 80% training and the remaining 20% test data before creating feature matrices to prevent information leakage because conservation scores were used as features to train our model. 25% of the training data was randomly picked as the validation data five times for cross validation. 
 
+The necessary FASTA, CSV files, and results for machine learning are included in the casr_ml folder.
+
 To create 50 different csv files:
 
 ```
@@ -166,3 +168,18 @@ The Test_SpecificPos.R code was used to calculate SDP scores based on the record
 ## Subfamily Specific Profile HMMs
 
 To make subfamily specific profile HMMs, firstly from the alignment of the subfamily, default HMM model must be produced with `--pnone` option of hmmer. Secondly, identity scores must be calculated with `compute_identity_score.py` code. Then, `Test_HMM.R` can be run to produce subfamily specific profile HMMs.
+
+Fasta files, identity score files are provided in the subfamily_specific_profile_HMMs folder.
+
+## The CaSR Activation Network
+
+We used the PDB files of 7 active state (PDB IDs 7SIL[79], 7SIM[79], 7E6T[3], 7M3G[8], 7M3F[8], 7DTT[5], 7DTV[5]) and 5 inactive state structures (7SIN[9], 7E6U[3], 7M3E[8], 7M3J[8], 7DTW[5]) human CaSR structures to represent each atom as a single residue and modified the RRCS algorithm to process these files. We applied t-test  to identify significant changes in contact scores with a p-value threshold of 0.01.
+
+
+`pdb_residue_to_atom.py` code is used to convert PDB files to represent each atom as a single residue.
+
+`rrcs_compare_dimer.py` compares residue-residue contact scores between residue pairs upon activation for dimers.
+`rrcs_compare.py` compares contact scores for single protomers
+
+`RRCS_modified.py` is used for the modified RRCS algorithm. The RRCS algorithm compares contact scores between residue pairs upon activation within the dimerization interface. The modified RRCS Algorithm processes the manipulated PDB files to detect changes at the atomic level.
+
