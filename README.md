@@ -173,7 +173,7 @@ Fasta files, identity score files are provided in the subfamily_specific_profile
 
 ## The CaSR Activation Network
 
-We used the PDB files of 7 active state (PDB IDs 7SIL[79], 7SIM[79], 7E6T[3], 7M3G[8], 7M3F[8], 7DTT[5], 7DTV[5]) and 5 inactive state structures (7SIN[9], 7E6U[3], 7M3E[8], 7M3J[8], 7DTW[5]) human CaSR structures to represent each atom as a single residue and modified the RRCS algorithm to process these files. We applied t-test  to identify significant changes in contact scores with a p-value threshold of 0.01.
+We used the PDB files of 7 active state (PDB IDs 7SIL, 7SIM, 7E6T, 7M3G, 7M3F, 7DTT, 7DTV) and 5 inactive state structures (7SIN, 7E6U, 7M3E, 7M3J, 7DTW) human CaSR structures to represent each atom as a single residue and modified the RRCS algorithm to process these files. We applied t-test  to identify significant changes in contact scores with a p-value threshold of 0.01.
 
 
 `pdb_residue_to_atom.py` code is used to convert PDB files to represent each atom as a single residue.
